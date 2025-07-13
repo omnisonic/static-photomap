@@ -1,5 +1,20 @@
+# Documentation and setup files
 ENVIRONMENT_SETUP.md
 README.md
 SETUP_CHECKLIST.md
+
+# Build and deployment scripts
 extract_photo_data.py
 upload-photo-to-s3.sh
+fix_photo_paths.py
+
+# Archive directories
+deploy-scripts-archive/
+
+# Local development files
+.env
+.env.local
+*.env
+
+# Build artifacts
+lib/

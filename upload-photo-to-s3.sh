@@ -2,8 +2,8 @@
 # upload-photos-to-s3.sh - Private bucket version
 
 # Configure these variables
-S3_BUCKET="photo-map-private"
-S3_REGION="us-east-1"
+S3_BUCKET="your-s3-bucket-name"
+S3_REGION="your-aws-region"
 LOCAL_PHOTOS_DIR="photos"
 MAX_CONCURRENT_UPLOADS=10
 ACL="private"  # Changed to private

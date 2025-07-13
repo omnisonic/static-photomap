@@ -38,8 +38,8 @@ Use standard AWS variable names in your shell environment or project `.env` file
 # Add to ~/.zshenv
 export AWS_ACCESS_KEY_ID=your_aws_access_key_here
 export AWS_SECRET_ACCESS_KEY=your_aws_secret_key_here
-export S3_REGION=us-east-1
-export S3_BUCKET=photo-map-private
+export S3_REGION=your_aws_region
+export S3_BUCKET=your_s3_bucket_name
 ```
 
 **Option 2: Using project .env file**
@@ -47,8 +47,8 @@ export S3_BUCKET=photo-map-private
 # .env (at project root)
 AWS_ACCESS_KEY_ID=your_aws_access_key_here
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key_here
-S3_REGION=us-east-1
-S3_BUCKET=photo-map-private
+S3_REGION=your_aws_region
+S3_BUCKET=your_s3_bucket_name
 ```
 
 ### Netlify Deployment
@@ -60,8 +60,8 @@ Since Netlify reserves standard AWS variable names, set custom variable names in
 3. Add these variables:
    - `MY_AWS_ACCESS_KEY_ID` = your AWS access key
    - `MY_AWS_SECRET_ACCESS_KEY` = your AWS secret key
-   - `MY_S3_REGION` = us-east-1
-   - `MY_S3_BUCKET` = photo-map-private
+   - `MY_S3_REGION` = your_aws_region
+   - `MY_S3_BUCKET` = your_s3_bucket_name
 
 The application code automatically detects the environment and uses the appropriate variable names:
 - Local: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`

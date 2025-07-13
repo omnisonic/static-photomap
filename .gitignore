@@ -39,3 +39,6 @@ netlify/functions/**/*.js.map
 
 deploy-scripts-archive/
 photos/
+
+# Local Netlify folder
+.netlify

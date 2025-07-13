@@ -22,8 +22,8 @@ Add to your `~/.zshenv` file:
 # AWS credentials in ~/.zshenv
 export AWS_ACCESS_KEY_ID=your_aws_access_key_here
 export AWS_SECRET_ACCESS_KEY=your_aws_secret_key_here
-export S3_REGION=us-east-1
-export S3_BUCKET=photo-map-private
+export S3_REGION=your_aws_region
+export S3_BUCKET=your_s3_bucket_name
 ```
 
 After updating `.zshenv`, reload your shell:
@@ -40,8 +40,8 @@ Create or update your `.env` file in the project root:
 # .env (at project root)
 AWS_ACCESS_KEY_ID=your_aws_access_key_here
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key_here
-S3_REGION=us-east-1
-S3_BUCKET=photo-map-private
+S3_REGION=your_aws_region
+S3_BUCKET=your_s3_bucket_name
 ```
 
 The Netlify CLI will read variables from both your shell environment and project `.env` file during local development.
@@ -55,8 +55,8 @@ The Netlify CLI will read variables from both your shell environment and project
 3. Add these variables:
    - `MY_AWS_ACCESS_KEY_ID` = your AWS access key
    - `MY_AWS_SECRET_ACCESS_KEY` = your AWS secret key
-   - `MY_S3_REGION` = us-east-1
-   - `MY_S3_BUCKET` = photo-map-private
+   - `MY_S3_REGION` = your_aws_region
+   - `MY_S3_BUCKET` = your_s3_bucket_name
 
 ### Option 2: Netlify CLI
 
@@ -64,8 +64,8 @@ The Netlify CLI will read variables from both your shell environment and project
 # Set variables for all contexts
 netlify env:set MY_AWS_ACCESS_KEY_ID your_access_key_here
 netlify env:set MY_AWS_SECRET_ACCESS_KEY your_secret_key_here
-netlify env:set MY_S3_REGION us-east-1
-netlify env:set MY_S3_BUCKET photo-map-private
+netlify env:set MY_S3_REGION your_aws_region
+netlify env:set MY_S3_BUCKET your_s3_bucket_name
 
 # Or set for specific deploy contexts
 netlify env:set MY_AWS_ACCESS_KEY_ID your_prod_key --context production
@@ -77,8 +77,8 @@ netlify env:set MY_AWS_ACCESS_KEY_ID your_branch_key --context branch-deploy
 
 ```toml
 [context.production.environment]
-  S3_REGION = "us-east-1"
-  S3_BUCKET = "photo-map-private"
+  S3_REGION = "your_aws_region"
+  S3_BUCKET = "your_s3_bucket_name"
   # Don't put secrets in netlify.toml as it's committed to git
 ```
 

@@ -17,8 +17,8 @@
    # Add to ~/.zshenv
    export AWS_ACCESS_KEY_ID=your_actual_aws_access_key_here
    export AWS_SECRET_ACCESS_KEY=your_actual_aws_secret_key_here
-   export S3_REGION=us-east-1
-   export S3_BUCKET=photo-map-private
+   export S3_REGION=your_aws_region
+   export S3_BUCKET=your_s3_bucket_name
    
    # Then reload your shell
    source ~/.zshenv
@@ -40,15 +40,15 @@
    - Add:
      - `MY_AWS_ACCESS_KEY_ID` = your AWS access key
      - `MY_AWS_SECRET_ACCESS_KEY` = your AWS secret key
-     - `MY_S3_REGION` = us-east-1
-     - `MY_S3_BUCKET` = photo-map-private
+     - `MY_S3_REGION` = your_aws_region
+     - `MY_S3_BUCKET` = your_s3_bucket_name
 
    **Option B: Using Netlify CLI**
    ```bash
    netlify env:set MY_AWS_ACCESS_KEY_ID your_access_key_here
    netlify env:set MY_AWS_SECRET_ACCESS_KEY your_secret_key_here
-   netlify env:set MY_S3_REGION us-east-1
-   netlify env:set MY_S3_BUCKET photo-map-private
+   netlify env:set MY_S3_REGION your_aws_region
+   netlify env:set MY_S3_BUCKET your_s3_bucket_name
    ```
 
 ## 🧪 Testing
