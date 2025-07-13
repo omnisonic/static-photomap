@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📍 GPS Photo Map Viewer</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1>📍 GPS Photo Map Viewer</h1>
+                <p>View your photos on an interactive map using GPS metadata</p>
+            </div>
+            
+            <div class="album-selector">
+                <h3>📁 Album Selection</h3>
+                <select id="albumSelect">
+                    <option value="">Select an album...</option>
+                </select>
+            </div>
+            
+            <div class="map-container">
+                <h3>📍 Photo Locations</h3>
+                <div id="map"></div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="gallery-header">
+                <h2>📷 Photo Gallery</h2>
+                <div id="photoCount"></div>
+            </div>
+            
+            <div id="gallery" class="gallery">
+                <div class="no-photos">
+                    <p>Select an album to view photos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Photo Modal -->
+    <div id="photoModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img id="modalImage" src="" alt="">
+            <div id="modalCaption"></div>
+        </div>
+    </div>
+    
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading photos...</p>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/photo-data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

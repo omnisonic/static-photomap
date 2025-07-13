@@ -1,0 +1,7 @@
+[build]
+  command = "npm install"  # ← Ensures dependencies are installed
+  functions = "netlify/functions"
+  publish = "public"
+
+[functions]
+  node_bundler = "esbuild"  # Netlify's default bundler

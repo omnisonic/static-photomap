@@ -1,0 +1,18 @@
+{
+  "name": "static-photomap",
+  "version": "1.0.0",
+  "description": "A static HTML/CSS/JavaScript version of the GPS Photo Map Viewer that displays photos on an interactive map using GPS metadata.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1692.0"
+  }
+}

@@ -1,0 +1,284 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    background-color: #f0f2f6;
+    color: #262730;
+    line-height: 1.6;
+}
+
+/* Container layout */
+.container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 500px;
+    background-color: white;
+    border-right: 1px solid #e6e9ef;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.sidebar-header {
+    margin-bottom: 1.5rem;
+}
+
+.sidebar-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #262730;
+}
+
+.sidebar-header p {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Album selector */
+.album-selector {
+    margin-bottom: 1.5rem;
+}
+
+.album-selector h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #262730;
+}
+
+#albumSelect {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: white;
+}
+
+/* Map container */
+.map-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.map-container h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #262730;
+}
+
+#map {
+    flex: 1;
+    min-height: 400px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+/* Main content */
+.main-content {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    background-color: #f0f2f6;
+}
+
+.gallery-header {
+    margin-bottom: 1rem;
+}
+
+.gallery-header h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #262730;
+    margin-bottom: 0.5rem;
+}
+
+#photoCount {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Gallery */
+.gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.no-photos {
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.photo-item {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: box-shadow 0.2s ease;
+}
+
+.photo-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.photo-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.photo-item img:hover {
+    transform: scale(1.02);
+}
+
+.photo-caption {
+    margin-top: 0.5rem;
+    font-weight: 600;
+    color: #262730;
+}
+
+.photo-coordinates {
+    margin-top: 0.25rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+}
+
+.modal-content {
+    position: relative;
+    margin: auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 1200px;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+}
+
+.modal-content img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 8px;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+}
+
+#modalCaption {
+    color: white;
+    margin-top: 1rem;
+    font-size: 1.1rem;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255,255,255,0.8);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #ff6b6b;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: 50vh;
+    }
+    
+    .main-content {
+        height: 50vh;
+    }
+    
+    #map {
+        min-height: 200px;
+    }
+}
+
+/* Leaflet popup customization */
+.leaflet-popup-content {
+    margin: 8px 12px;
+    line-height: 1.4;
+}
+
+.popup-image {
+    width: 200px;
+    height: auto;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.popup-filename {
+    margin-top: 0.5rem;
+    font-weight: 600;
+    color: #262730;
+    text-align: center;
+}

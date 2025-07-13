@@ -1,0 +1,45 @@
+# .gitignore for Netlify/S3 project
+
+# Dependencies
+node_modules/
+.env
+.env.local
+*.env
+
+# Netlify
+.netlify/
+.netlify/functions/
+functions/
+
+# Build files
+public/build/
+dist/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# AWS credentials (never commit these!)
+*.pem
+*.key
+*-credentials.json
+
+# Function build artifacts
+netlify/functions/**/*.js.map
+
+# Temporary files
+*.tmp
+*.temp
+
+deploy-scripts-archive/
+photos/
