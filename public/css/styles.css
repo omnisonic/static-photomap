@@ -386,3 +386,34 @@ body {
 .logout-btn:hover {
     background-color: #c82333;
 }
+
+/* Lazy loading styles */
+.lazy-image {
+    transition: opacity 0.3s ease;
+}
+
+.lazy-image.loading {
+    opacity: 0.6;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading-shimmer 1.5s infinite;
+}
+
+.lazy-image.loaded {
+    opacity: 1;
+}
+
+@keyframes loading-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Placeholder for lazy images */
+.lazy-image[src*="data:image/svg+xml"] {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+}

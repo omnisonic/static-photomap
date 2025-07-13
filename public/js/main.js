@@ -2,12 +2,14 @@
 let map;
 let currentMarkers = [];
 let currentAvenzaLayer = null;
+let imageObserver = null;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     initializeMap();
     populateAlbumSelector();
     setupEventListeners();
+    initializeLazyLoading();
 });
 
 // Initialize the Leaflet map
@@ -195,7 +197,49 @@ function updateMap(photos, avenzaData) {
     }
 }
 
-// Update the photo gallery
+// Initialize lazy loading with Intersection Observer
+function initializeLazyLoading() {
+    // Check if Intersection Observer is supported
+    if ('IntersectionObserver' in window) {
+        imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const actualSrc = img.dataset.src;
+                    
+                    if (actualSrc) {
+                        // Show loading indicator
+                        img.classList.add('loading');
+                        
+                        // Load the actual image
+                        img.src = actualSrc;
+                        img.removeAttribute('data-src');
+                        
+                        // Remove loading class when image loads
+                        img.onload = () => {
+                            img.classList.remove('loading');
+                            img.classList.add('loaded');
+                        };
+                        
+                        // Handle errors
+                        img.onerror = () => {
+                            img.classList.remove('loading');
+                            handleImageError(img);
+                        };
+                        
+                        // Stop observing this image
+                        observer.unobserve(img);
+                    }
+                }
+            });
+        }, {
+            // Load images when they're 100px away from viewport
+            rootMargin: '100px'
+        });
+    }
+}
+
+// Update the photo gallery with lazy loading
 function updateGallery(photos) {
     const gallery = document.getElementById('gallery');
     
@@ -218,16 +262,32 @@ function updateGallery(photos) {
         const photoItem = document.createElement('div');
         photoItem.className = 'photo-item';
         
+        // Create placeholder image with lazy loading
+        const actualSrc = photo.presignedUrl || photo.path;
+        const placeholderSrc = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxvYWRpbmcuLi48L3RleHQ+PC9zdmc+';
+        
         photoItem.innerHTML = `
-            <img src="${photo.presignedUrl || photo.path}"
+            <img src="${placeholderSrc}"
+                 data-src="${actualSrc}"
                  alt="${photo.filename}"
-                 onclick="openModal('${photo.presignedUrl || photo.path}', '${photo.filename}')"
+                 class="lazy-image"
+                 onclick="openModal('${actualSrc}', '${photo.filename}')"
                  onerror="handleImageError(this)">
             <div class="photo-caption">${photo.filename}</div>
             <div class="photo-coordinates">📍 ${photo.latitude.toFixed(4)}, ${photo.longitude.toFixed(4)}</div>
         `;
         
         gallery.appendChild(photoItem);
+        
+        // Start observing the image for lazy loading
+        const img = photoItem.querySelector('.lazy-image');
+        if (imageObserver && img) {
+            imageObserver.observe(img);
+        } else if (img) {
+            // Fallback for browsers without Intersection Observer support
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+        }
     });
 }
 
