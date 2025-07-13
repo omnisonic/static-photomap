@@ -1,0 +1,21 @@
+{
+	"geolocation": {
+		"data": {
+			"city": "Amsterdam",
+			"country": {
+				"code": "NL",
+				"name": "The Netherlands"
+			},
+			"subdivision": {
+				"code": "NH",
+				"name": "North Holland"
+			},
+			"timezone": "Europe/Amsterdam",
+			"latitude": 52.352,
+			"longitude": 4.9392,
+			"postalCode": "1098"
+		},
+		"timestamp": 1752425249821
+	},
+	"siteId": "de3d1ad6-71b4-4057-8e3a-226a04ed9d27"
+}

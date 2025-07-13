@@ -1,0 +1,36 @@
+functionsDirectory = "/Users/omnisonic/Documents/code/MyWebDev/netlify/static-photomap/netlify/functions"
+functionsDirectoryOrigin = "config-v1"
+plugins = []
+headers = []
+redirects = []
+
+[build]
+publish = "/Users/omnisonic/Documents/code/MyWebDev/netlify/static-photomap/public"
+publishOrigin = "config"
+functions = "/Users/omnisonic/Documents/code/MyWebDev/netlify/static-photomap/netlify/functions"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[dev]
+framework = "#static"
+targetPort = 3999.0
+publish = "public"
+autoLaunch = true
+
+[functions]
+
+[functions."*"]
+external_node_modules = ["@aws-sdk/client-s3"]
+node_bundler = "esbuild"

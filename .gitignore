@@ -6,10 +6,6 @@ node_modules/
 .env.local
 *.env
 
-# Netlify
-.netlify/
-.netlify/functions/
-functions/
 
 # Build files
 public/build/
