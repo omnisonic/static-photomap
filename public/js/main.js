@@ -86,9 +86,7 @@ async function loadAlbum(albumName) {
         // Fetch presigned URLs for all photos
         const photosWithUrls = await Promise.all(photos.map(async photo => {
             try {
-                // Extract S3 key from full S3 URL (remove s3://bucket-name/ prefix)
-                const s3Key = photo.path.replace(/^s3:\/\/[^\/]+\//, '');
-                const response = await fetch(`/.netlify/functions/s3-proxy?key=${encodeURIComponent(s3Key)}`);
+                const response = await fetch(`/.netlify/functions/s3-proxy?key=${encodeURIComponent(photo.path)}`);
                 if (!response.ok) throw new Error('Failed to get URL');
                 return {
                     ...photo,
