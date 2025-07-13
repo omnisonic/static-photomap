@@ -31,8 +31,17 @@ if (!s3Bucket) {
   throw new Error('Missing MY_S3_BUCKET environment variable. Set this in Netlify dashboard.');
 }
 
-exports.handler = async (event) => {
+exports.handler = async (event, context) => {
   try {
+    // Check for session token in headers
+    const authHeader = event.headers.authorization || event.headers.Authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return {
+        statusCode: 401,
+        body: JSON.stringify({ error: 'Authentication required' })
+      };
+    }
+
     const { key } = event.queryStringParameters;
 
     const s3 = new S3Client({

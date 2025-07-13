@@ -83,17 +83,27 @@ async function loadAlbum(albumName) {
         const photos = getPhotosForAlbum(albumName);
         const avenzaData = await loadAvenzaData(albumName);
         
-        // Fetch presigned URLs for all photos
+        // Fetch presigned URLs for all photos using authenticated requests
         const photosWithUrls = await Promise.all(photos.map(async photo => {
             try {
-                const response = await fetch(`/.netlify/functions/s3-proxy?key=${encodeURIComponent(photo.path)}`);
-                if (!response.ok) throw new Error('Failed to get URL');
+                const response = await window.authManager.makeAuthenticatedRequest(
+                    `/.netlify/functions/s3-proxy?key=${encodeURIComponent(photo.path)}`
+                );
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        throw new Error('Authentication required');
+                    }
+                    throw new Error('Failed to get URL');
+                }
                 return {
                     ...photo,
                     presignedUrl: await response.text()
                 };
             } catch (error) {
                 console.error('Error getting presigned URL:', error);
+                if (error.message === 'Not authenticated' || error.message === 'Authentication required') {
+                    window.authManager.showAuthUI();
+                }
                 return {
                     ...photo,
                     presignedUrl: null

@@ -8,12 +8,25 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <!-- Authentication UI -->
+    <div id="authContainer" class="auth-container" style="display: none;">
+        <div class="auth-content">
+            <h2>📍 GPS Photo Map Viewer</h2>
+            <p>Please enter the password to access your photo maps</p>
+            <form id="loginForm">
+                <input type="password" id="passwordInput" placeholder="Enter password" required>
+                <button type="submit" id="loginSubmitBtn" class="auth-btn">Sign In</button>
+            </form>
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <h1>📍 GPS Photo Map Viewer</h1>
                 <p>View your photos on an interactive map using GPS metadata</p>
+                <button id="logoutBtn" class="logout-btn" style="display: none;">Sign Out</button>
             </div>
             
             <div class="album-selector">
@@ -60,6 +73,7 @@
     </div>
     
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/simple-auth.js"></script>
     <script src="js/photo-data.js"></script>
     <script src="js/main.js"></script>
 </body>
