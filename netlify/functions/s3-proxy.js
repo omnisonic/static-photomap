@@ -2,12 +2,12 @@ const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
 // Get AWS credentials and S3 config with fallback logic
-// Local development: use standard AWS variable names
-// Netlify deploys: use custom variable names (since Netlify reserves standard ones)
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID || process.env.MY_AWS_ACCESS_KEY_ID;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || process.env.MY_AWS_SECRET_ACCESS_KEY;
-const s3Region = process.env.S3_REGION || process.env.MY_S3_REGION;
-const s3Bucket = process.env.S3_BUCKET || process.env.MY_S3_BUCKET;
+// Netlify deploys: prioritize custom variable names (since Netlify reserves standard ones)
+// Local development: fall back to standard AWS variable names
+const accessKeyId = process.env.MY_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.MY_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
+const s3Region = process.env.MY_S3_REGION || process.env.S3_REGION;
+const s3Bucket = process.env.MY_S3_BUCKET || process.env.S3_BUCKET;
 
 // Validate environment variables
 if (!accessKeyId) {
