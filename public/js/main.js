@@ -83,16 +83,35 @@ async function loadAlbum(albumName) {
         const photos = getPhotosForAlbum(albumName);
         const avenzaData = await loadAvenzaData(albumName);
         
-        updateMap(photos, avenzaData);
-        updateGallery(photos);
-        updatePhotoCount(photos.length);
-        
+        // Fetch presigned URLs for all photos
+        const photosWithUrls = await Promise.all(photos.map(async photo => {
+            try {
+                // Extract S3 key from full S3 URL (remove s3://bucket-name/ prefix)
+                const s3Key = photo.path.replace(/^s3:\/\/[^\/]+\//, '');
+                const response = await fetch(`/.netlify/functions/s3-proxy?key=${encodeURIComponent(s3Key)}`);
+                if (!response.ok) throw new Error('Failed to get URL');
+                return {
+                    ...photo,
+                    presignedUrl: await response.text()
+                };
+            } catch (error) {
+                console.error('Error getting presigned URL:', error);
+                return {
+                    ...photo,
+                    presignedUrl: null
+                };
+            }
+        }));
+
+        updateMap(photosWithUrls, avenzaData);
+        updateGallery(photosWithUrls);
+        updatePhotoCount(photosWithUrls.length);
     } catch (error) {
         console.error('Error loading album:', error);
         showError('Error loading album: ' + error.message);
     } finally {
         hideLoading();
-    }
+}
 }
 
 // Update the map with photos and optional Avenza data
@@ -127,9 +146,9 @@ function updateMap(photos, avenzaData) {
         // Create popup content
         const popupContent = `
             <div style="text-align: center;">
-                <img src="${photo.path}" 
+                <img src="${photo.presignedUrl || photo.path}"
                      class="popup-image" 
-                     onclick="openModal('${photo.path}', '${photo.filename}')"
+                     onclick="openModal('${photo.presignedUrl || photo.path}', '${photo.filename}')"
                      onerror="this.style.display='none'">
                 <div class="popup-filename">${photo.filename}</div>
             </div>
@@ -176,10 +195,10 @@ function updateGallery(photos) {
         photoItem.className = 'photo-item';
         
         photoItem.innerHTML = `
-            <img src="${photo.path}" 
+            <img src="${photo.presignedUrl || photo.path}"
                  alt="${photo.filename}"
-                 onclick="openModal('${photo.path}', '${photo.filename}')"
-                 onerror="this.style.display='none'; this.nextElementSibling.textContent='Error loading image'">
+                 onclick="openModal('${photo.presignedUrl || photo.path}', '${photo.filename}')"
+                 onerror="handleImageError(this)">
             <div class="photo-caption">${photo.filename}</div>
             <div class="photo-coordinates">📍 ${photo.latitude.toFixed(4)}, ${photo.longitude.toFixed(4)}</div>
         `;
@@ -215,7 +234,7 @@ function clearGallery() {
 }
 
 // Open photo modal
-function openModal(imageSrc, caption) {
+function openModal(imageSrc) {
     const modal = document.getElementById('photoModal');
     const modalImage = document.getElementById('modalImage');
     const modalCaption = document.getElementById('modalCaption');

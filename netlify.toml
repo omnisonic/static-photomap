@@ -1,7 +1,13 @@
 [build]
-  command = "npm install"  # ← Ensures dependencies are installed
   functions = "netlify/functions"
   publish = "public"
 
 [functions]
-  node_bundler = "esbuild"  # Netlify's default bundler
+  node_bundler = "esbuild"
+  external_node_modules = ["@aws-sdk/client-s3"]
+
+[dev]
+  framework = "#static"
+  targetPort = 3999
+  publish = "public"
+  autoLaunch = true

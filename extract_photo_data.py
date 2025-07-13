@@ -121,6 +121,7 @@ def copy_photos_and_extract_data():
     
     # Get all album directories
     albums = {}
+    S3_BASE_URL = "s3://photo-map-private/photos"  # Added S3 base URL
     
     if os.path.exists(source_photos_dir):
         for item in os.listdir(source_photos_dir):
@@ -134,8 +135,11 @@ def copy_photos_and_extract_data():
                     shutil.rmtree(target_album_dir)
                 shutil.copytree(item_path, target_album_dir)
                 
-                # Extract photo data
+                # Extract photo data with S3 paths
                 photo_data = scan_photos_directory(target_album_dir)
+                # Update paths to use S3 URLs
+                for photo in photo_data:
+                    photo['path'] = os.path.join(S3_BASE_URL, item, os.path.basename(photo['path']))
                 albums[item] = photo_data
                 
                 # Copy avenza.geojson if it exists
@@ -145,7 +149,7 @@ def copy_photos_and_extract_data():
                     shutil.copy2(avenza_source, avenza_target)
                     print(f"Copied avenza.geojson for {item}")
     
-    # Create JavaScript data file
+    # Create JavaScript data file - update fetch URL to use S3 path
     js_content = f"""// Auto-generated photo data
 const PHOTO_DATA = {json.dumps(albums, indent=2)};
 
@@ -162,7 +166,7 @@ function getPhotosForAlbum(albumName) {{
 // Load Avenza data for an album if available
 async function loadAvenzaData(albumName) {{
     try {{
-        const response = await fetch(`photos/${{albumName}}/avenza.geojson`);
+        const response = await fetch(`{S3_BASE_URL}/${{albumName}}/avenza.geojson`);
         if (response.ok) {{
             return await response.json();
         }}
