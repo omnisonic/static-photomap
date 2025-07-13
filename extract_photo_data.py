@@ -121,7 +121,7 @@ def copy_photos_and_extract_data():
     
     # Get all album directories
     albums = {}
-    S3_BASE_URL = "s3://photo-map-private/photos"  # Added S3 base URL
+    S3_BASE_URL = "s3://your-s3-bucket-name/photos"  # Added S3 base URL
     
     if os.path.exists(source_photos_dir):
         for item in os.listdir(source_photos_dir):
