@@ -130,16 +130,24 @@ function updateMap(photos, avenzaData) {
         return;
     }
     
+    // Sort photos by date taken (chronological order) for consistent ordering
+    const sortedPhotos = [...photos].sort((a, b) => {
+        // Convert datetime string "2025:07:09 17:54:13" to Date object
+        const dateA = new Date(a.datetime.replace(/:/g, '-').replace(/-(\d{2}:\d{2}:\d{2})$/, ' $1'));
+        const dateB = new Date(b.datetime.replace(/:/g, '-').replace(/-(\d{2}:\d{2}:\d{2})$/, ' $1'));
+        return dateA - dateB;
+    });
+    
     // Calculate bounds
-    const lats = photos.map(p => p.latitude);
-    const lngs = photos.map(p => p.longitude);
+    const lats = sortedPhotos.map(p => p.latitude);
+    const lngs = sortedPhotos.map(p => p.longitude);
     const bounds = [
         [Math.min(...lats), Math.min(...lngs)],
         [Math.max(...lats), Math.max(...lngs)]
     ];
     
     // Add photo markers
-    photos.forEach(photo => {
+    sortedPhotos.forEach(photo => {
         const marker = L.marker([photo.latitude, photo.longitude], {
             icon: L.icon({
                 iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
@@ -196,9 +204,17 @@ function updateGallery(photos) {
         return;
     }
     
+    // Sort photos by date taken (chronological order)
+    const sortedPhotos = [...photos].sort((a, b) => {
+        // Convert datetime string "2025:07:09 17:54:13" to Date object
+        const dateA = new Date(a.datetime.replace(/:/g, '-').replace(/-(\d{2}:\d{2}:\d{2})$/, ' $1'));
+        const dateB = new Date(b.datetime.replace(/:/g, '-').replace(/-(\d{2}:\d{2}:\d{2})$/, ' $1'));
+        return dateA - dateB;
+    });
+    
     gallery.innerHTML = '';
     
-    photos.forEach(photo => {
+    sortedPhotos.forEach(photo => {
         const photoItem = document.createElement('div');
         photoItem.className = 'photo-item';
         
