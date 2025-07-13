@@ -1,26 +1,34 @@
 const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
-// Get AWS credentials and S3 config with fallback logic
-// Netlify deploys: prioritize custom variable names (since Netlify reserves standard ones)
-// Local development: fall back to standard AWS variable names
-const accessKeyId = process.env.MY_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
-const secretAccessKey = process.env.MY_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
-const s3Region = process.env.MY_S3_REGION || process.env.S3_REGION;
-const s3Bucket = process.env.MY_S3_BUCKET || process.env.S3_BUCKET;
+// Get AWS credentials and S3 config - use only custom variable names for Netlify
+// This avoids Netlify's reserved AWS environment variables entirely
+const accessKeyId = process.env.MY_AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.MY_AWS_SECRET_ACCESS_KEY;
+const s3Region = process.env.MY_S3_REGION;
+const s3Bucket = process.env.MY_S3_BUCKET;
+
+// Debug logging (will appear in Netlify function logs)
+console.log('Environment check:', {
+  hasMyAccessKey: !!process.env.MY_AWS_ACCESS_KEY_ID,
+  hasMySecretKey: !!process.env.MY_AWS_SECRET_ACCESS_KEY,
+  hasMyRegion: !!process.env.MY_S3_REGION,
+  hasMyBucket: !!process.env.MY_S3_BUCKET,
+  accessKeyPrefix: accessKeyId ? accessKeyId.substring(0, 8) + '...' : 'undefined'
+});
 
 // Validate environment variables
 if (!accessKeyId) {
-  throw new Error('Missing AWS access key. Set AWS_ACCESS_KEY_ID (local) or MY_AWS_ACCESS_KEY_ID (Netlify)');
+  throw new Error('Missing MY_AWS_ACCESS_KEY_ID environment variable. Set this in Netlify dashboard.');
 }
 if (!secretAccessKey) {
-  throw new Error('Missing AWS secret key. Set AWS_SECRET_ACCESS_KEY (local) or MY_AWS_SECRET_ACCESS_KEY (Netlify)');
+  throw new Error('Missing MY_AWS_SECRET_ACCESS_KEY environment variable. Set this in Netlify dashboard.');
 }
 if (!s3Region) {
-  throw new Error('Missing S3 region. Set S3_REGION (local) or MY_S3_REGION (Netlify)');
+  throw new Error('Missing MY_S3_REGION environment variable. Set this in Netlify dashboard.');
 }
 if (!s3Bucket) {
-  throw new Error('Missing S3 bucket. Set S3_BUCKET (local) or MY_S3_BUCKET (Netlify)');
+  throw new Error('Missing MY_S3_BUCKET environment variable. Set this in Netlify dashboard.');
 }
 
 exports.handler = async (event) => {
