@@ -1,0 +1,5 @@
+ENVIRONMENT_SETUP.md
+README.md
+SETUP_CHECKLIST.md
+extract_photo_data.py
+upload-photo-to-s3.sh
