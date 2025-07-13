@@ -60,8 +60,8 @@ Since Netlify reserves standard AWS variable names, set custom variable names in
 3. Add these variables:
    - `MY_AWS_ACCESS_KEY_ID` = your AWS access key
    - `MY_AWS_SECRET_ACCESS_KEY` = your AWS secret key
-   - `S3_REGION` = us-east-1
-   - `S3_BUCKET` = photo-map-private
+   - `MY_S3_REGION` = us-east-1
+   - `MY_S3_BUCKET` = photo-map-private
 
 The application code automatically detects the environment and uses the appropriate variable names:
 - Local: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`

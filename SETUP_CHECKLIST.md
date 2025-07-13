@@ -40,15 +40,15 @@
    - Add:
      - `MY_AWS_ACCESS_KEY_ID` = your AWS access key
      - `MY_AWS_SECRET_ACCESS_KEY` = your AWS secret key
-     - `S3_REGION` = us-east-1
-     - `S3_BUCKET` = photo-map-private
+     - `MY_S3_REGION` = us-east-1
+     - `MY_S3_BUCKET` = photo-map-private
 
    **Option B: Using Netlify CLI**
    ```bash
    netlify env:set MY_AWS_ACCESS_KEY_ID your_access_key_here
    netlify env:set MY_AWS_SECRET_ACCESS_KEY your_secret_key_here
-   netlify env:set S3_REGION us-east-1
-   netlify env:set S3_BUCKET photo-map-private
+   netlify env:set MY_S3_REGION us-east-1
+   netlify env:set MY_S3_BUCKET photo-map-private
    ```
 
 ## 🧪 Testing

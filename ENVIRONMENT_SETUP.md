@@ -55,8 +55,8 @@ The Netlify CLI will read variables from both your shell environment and project
 3. Add these variables:
    - `MY_AWS_ACCESS_KEY_ID` = your AWS access key
    - `MY_AWS_SECRET_ACCESS_KEY` = your AWS secret key
-   - `S3_REGION` = us-east-1
-   - `S3_BUCKET` = photo-map-private
+   - `MY_S3_REGION` = us-east-1
+   - `MY_S3_BUCKET` = photo-map-private
 
 ### Option 2: Netlify CLI
 
@@ -64,8 +64,8 @@ The Netlify CLI will read variables from both your shell environment and project
 # Set variables for all contexts
 netlify env:set MY_AWS_ACCESS_KEY_ID your_access_key_here
 netlify env:set MY_AWS_SECRET_ACCESS_KEY your_secret_key_here
-netlify env:set S3_REGION us-east-1
-netlify env:set S3_BUCKET photo-map-private
+netlify env:set MY_S3_REGION us-east-1
+netlify env:set MY_S3_BUCKET photo-map-private
 
 # Or set for specific deploy contexts
 netlify env:set MY_AWS_ACCESS_KEY_ID your_prod_key --context production
