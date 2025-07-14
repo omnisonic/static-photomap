@@ -79,14 +79,41 @@ function setupEventListeners() {
 
 // Load an album
 async function loadAlbum(albumName) {
+    console.log(`Loading album: ${albumName}`);
     showLoading();
     
     try {
-        const photos = getPhotosForAlbum(albumName);
+        // Validate album name
+        if (!albumName || typeof albumName !== 'string') {
+            throw new Error('Invalid album name provided');
+        }
+        
+        // Load album data with validation
+        const photos = await loadAlbumData(albumName);
+        console.log(`Loaded ${photos.length} photos for album: ${albumName}`);
+        
+        // Validate photo data structure
+        const validPhotos = photos.filter(photo => {
+            const isValid = photo && 
+                           typeof photo.latitude === 'number' && 
+                           typeof photo.longitude === 'number' && 
+                           photo.filename && 
+                           photo.path;
+            if (!isValid) {
+                console.warn('Invalid photo data found:', photo);
+            }
+            return isValid;
+        });
+        
+        console.log(`${validPhotos.length} valid photos with GPS data found`);
+        
         const avenzaData = await loadAvenzaData(albumName);
+        if (avenzaData) {
+            console.log('Avenza GPS track data loaded');
+        }
         
         // Fetch presigned URLs for all photos using authenticated requests
-        const photosWithUrls = await Promise.all(photos.map(async photo => {
+        const photosWithUrls = await Promise.all(validPhotos.map(async photo => {
             try {
                 const response = await window.authManager.makeAuthenticatedRequest(
                     `/.netlify/functions/s3-proxy?key=${encodeURIComponent(photo.path)}`
@@ -113,15 +140,19 @@ async function loadAlbum(albumName) {
             }
         }));
 
+        console.log(`Successfully processed ${photosWithUrls.length} photos for display`);
+        
         updateMap(photosWithUrls, avenzaData);
         updateGallery(photosWithUrls);
         updatePhotoCount(photosWithUrls.length);
+        
+        console.log(`Album ${albumName} loaded successfully`);
     } catch (error) {
         console.error('Error loading album:', error);
         showError('Error loading album: ' + error.message);
     } finally {
         hideLoading();
-}
+    }
 }
 
 // Update the map with photos and optional Avenza data
@@ -318,13 +349,13 @@ function clearGallery() {
 }
 
 // Open photo modal
-function openModal(imageSrc) {
+function openModal(imageSrc, caption) {
     const modal = document.getElementById('photoModal');
     const modalImage = document.getElementById('modalImage');
     const modalCaption = document.getElementById('modalCaption');
     
     modalImage.src = imageSrc;
-    modalCaption.textContent = caption;
+    modalCaption.textContent = caption || '';
     modal.style.display = 'block';
     
     // Prevent body scrolling when modal is open
