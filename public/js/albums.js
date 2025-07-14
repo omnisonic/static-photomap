@@ -17,21 +17,17 @@ async function loadAlbumData(albumName) {
             throw new Error(`Failed to load album data: ${response.status}`);
         }
         
-        // Get the JavaScript content as text
-        const jsContent = await response.text();
-        
-        // Create a safe evaluation context
-        const evalContext = {};
-        
-        // Execute the JavaScript in a controlled way
-        const func = new Function('context', `
-            ${jsContent}
-            context.ALBUM_DATA = ALBUM_DATA;
-        `);
-        
-        func(evalContext);
-        
-        return evalContext.ALBUM_DATA || [];
+        // Create a script element to load the album data
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = `js/albums/${albumName}.js`;
+            script.onload = () => {
+                const albumData = window.ALBUM_DATA;
+                resolve(albumData || []);
+            };
+            script.onerror = () => reject(new Error(`Failed to load album script`));
+            document.head.appendChild(script);
+        });
     } catch (error) {
         console.error(`Error loading album data for ${albumName}:`, error);
         return [];

@@ -29,6 +29,13 @@ const ALBUM_DATA = [
     "datetime": "2025:06:23 19:59:14"
   },
   {
+    "filename": "2025-07-10 17-38-51.webp",
+    "path": "photos/roadtrip_2025/2025-07-10 17-38-51.webp",
+    "latitude": 38.32796944444445,
+    "longitude": -109.12011666666666,
+    "datetime": "2025:07:10 17:38:51"
+  },
+  {
     "filename": "2025-06-23 19-51-23.webp",
     "path": "photos/roadtrip_2025/2025-06-23 19-51-23.webp",
     "latitude": 39.08677222222222,
@@ -85,6 +92,13 @@ const ALBUM_DATA = [
     "datetime": "2025:06:30 12:00:23"
   },
   {
+    "filename": "2025-07-09 19-25-21.webp",
+    "path": "photos/roadtrip_2025/2025-07-09 19-25-21.webp",
+    "latitude": 40.694627777777775,
+    "longitude": -110.96003611111111,
+    "datetime": "2025:07:09 19:25:21"
+  },
+  {
     "filename": "2025-06-23 19-30-12.webp",
     "path": "photos/roadtrip_2025/2025-06-23 19-30-12.webp",
     "latitude": 39.08781388888889,
@@ -125,6 +139,13 @@ const ALBUM_DATA = [
     "latitude": 35.8433,
     "longitude": -104.94348055555555,
     "datetime": "2025:06:23 13:01:41"
+  },
+  {
+    "filename": "2025-07-09 19-25-06.webp",
+    "path": "photos/roadtrip_2025/2025-07-09 19-25-06.webp",
+    "latitude": 40.69466944444444,
+    "longitude": -110.96006944444444,
+    "datetime": "2025:07:09 19:25:06"
   },
   {
     "filename": "2025-07-04 21-20-33.webp",
@@ -246,6 +267,13 @@ const ALBUM_DATA = [
     "datetime": "2025:06:23 19:19:07"
   },
   {
+    "filename": "2025-07-09 19-23-34.webp",
+    "path": "photos/roadtrip_2025/2025-07-09 19-23-34.webp",
+    "latitude": 40.69533055555555,
+    "longitude": -110.9589388888889,
+    "datetime": "2025:07:09 19:23:34"
+  },
+  {
     "filename": "2025-06-23 19-40-52.webp",
     "path": "photos/roadtrip_2025/2025-06-23 19-40-52.webp",
     "latitude": 39.08793611111111,
@@ -288,6 +316,13 @@ const ALBUM_DATA = [
     "datetime": "2025:06:30 20:56:19"
   },
   {
+    "filename": "2025-07-10 19-26-30.webp",
+    "path": "photos/roadtrip_2025/2025-07-10 19-26-30.webp",
+    "latitude": 38.15832777777778,
+    "longitude": -108.32416388888889,
+    "datetime": "2025:07:10 19:26:30"
+  },
+  {
     "filename": "2025-07-04 20-48-46.webp",
     "path": "photos/roadtrip_2025/2025-07-04 20-48-46.webp",
     "latitude": 40.62531388888889,
@@ -307,6 +342,13 @@ const ALBUM_DATA = [
     "latitude": 41.33582777777778,
     "longitude": -106.33078055555555,
     "datetime": "2025:06:30 12:41:09"
+  },
+  {
+    "filename": "2025-07-09 17-45-16.webp",
+    "path": "photos/roadtrip_2025/2025-07-09 17-45-16.webp",
+    "latitude": 40.677166666666665,
+    "longitude": -110.96260833333334,
+    "datetime": "2025:07:09 17:45:16"
   },
   {
     "filename": "2025-06-23 19-38-57.webp",
@@ -421,6 +463,13 @@ const ALBUM_DATA = [
     "datetime": "2025:06:23 19:32:07"
   },
   {
+    "filename": "2025-07-11 11-33-52.webp",
+    "path": "photos/roadtrip_2025/2025-07-11 11-33-52.webp",
+    "latitude": 37.924569444444444,
+    "longitude": -107.88311944444443,
+    "datetime": "2025:07:11 11:33:52"
+  },
+  {
     "filename": "2025-06-25 12-06-41.webp",
     "path": "photos/roadtrip_2025/2025-06-25 12-06-41.webp",
     "latitude": 39.83115,
@@ -512,6 +561,13 @@ const ALBUM_DATA = [
     "datetime": "2025:06:26 19:59:15"
   },
   {
+    "filename": "2025-07-11 11-45-16.webp",
+    "path": "photos/roadtrip_2025/2025-07-11 11-45-16.webp",
+    "latitude": 37.83070277777778,
+    "longitude": -107.88990000000001,
+    "datetime": "2025:07:11 11:45:16"
+  },
+  {
     "filename": "2025-06-26 20-00-02.webp",
     "path": "photos/roadtrip_2025/2025-06-26 20-00-02.webp",
     "latitude": 40.43525555555555,
@@ -545,6 +601,27 @@ const ALBUM_DATA = [
     "latitude": 40.42619444444444,
     "longitude": -105.04239722222222,
     "datetime": "2025:06:25 17:09:39"
+  },
+  {
+    "filename": "2025-07-10 19-26-23.webp",
+    "path": "photos/roadtrip_2025/2025-07-10 19-26-23.webp",
+    "latitude": 38.159369444444444,
+    "longitude": -108.32569166666666,
+    "datetime": "2025:07:10 19:26:23"
+  },
+  {
+    "filename": "2025-07-10 17-38-53.webp",
+    "path": "photos/roadtrip_2025/2025-07-10 17-38-53.webp",
+    "latitude": 38.32821944444445,
+    "longitude": -109.11955277777777,
+    "datetime": "2025:07:10 17:38:53"
+  },
+  {
+    "filename": "2025-07-10 17-38-52.webp",
+    "path": "photos/roadtrip_2025/2025-07-10 17-38-52.webp",
+    "latitude": 38.32821944444445,
+    "longitude": -109.11955277777777,
+    "datetime": "2025:07:10 17:38:52"
   },
   {
     "filename": "2025-06-30 11-18-54.webp",
@@ -636,6 +713,20 @@ const ALBUM_DATA = [
     "latitude": 39.83185277777778,
     "longitude": -104.71095277777778,
     "datetime": "2025:06:25 12:08:18"
+  },
+  {
+    "filename": "2025-07-11 11-35-06.webp",
+    "path": "photos/roadtrip_2025/2025-07-11 11-35-06.webp",
+    "latitude": 37.91161666666667,
+    "longitude": -107.88634444444445,
+    "datetime": "2025:07:11 11:35:06"
+  },
+  {
+    "filename": "2025-07-11 15-37-44.webp",
+    "path": "photos/roadtrip_2025/2025-07-11 15-37-44.webp",
+    "latitude": 37.06725277777778,
+    "longitude": -106.83036944444444,
+    "datetime": "2025:07:11 15:37:44"
   },
   {
     "filename": "2025-06-30 12-10-21.webp",
