@@ -165,10 +165,7 @@ function updateMap(photos, avenzaData) {
     
     // Sort photos by date taken (chronological order) for consistent ordering
     const sortedPhotos = [...photos].sort((a, b) => {
-        // Convert datetime string "2025:07:09 17:54:13" to Date object
-        const dateA = new Date(a.datetime.replace(/:/g, '-').replace(/-(\d{2}:\d{2}:\d{2})$/, ' $1'));
-        const dateB = new Date(b.datetime.replace(/:/g, '-').replace(/-(\d{2}:\d{2}:\d{2})$/, ' $1'));
-        return dateA - dateB;
+        return sortPhotosByDate(a, b);
     });
     
     // Calculate bounds
@@ -281,10 +278,7 @@ function updateGallery(photos) {
     
     // Sort photos by date taken (chronological order)
     const sortedPhotos = [...photos].sort((a, b) => {
-        // Convert datetime string "2025:07:09 17:54:13" to Date object
-        const dateA = new Date(a.datetime.replace(/:/g, '-').replace(/-(\d{2}:\d{2}:\d{2})$/, ' $1'));
-        const dateB = new Date(b.datetime.replace(/:/g, '-').replace(/-(\d{2}:\d{2}:\d{2})$/, ' $1'));
-        return dateA - dateB;
+        return sortPhotosByDate(a, b);
     });
     
     gallery.innerHTML = '';
@@ -387,6 +381,55 @@ function hideLoading() {
 function showError(message) {
     // Simple error display - could be enhanced with a proper notification system
     alert(message);
+}
+
+// Utility function to sort photos by date with robust parsing
+function sortPhotosByDate(a, b) {
+    // Function to parse datetime string to Date object
+    function parsePhotoDate(photo) {
+        // Try to parse the datetime field first
+        if (photo.datetime) {
+            try {
+                // Handle format "2025:07:09 17:54:13"
+                const dateStr = photo.datetime.replace(/^(\d{4}):(\d{2}):(\d{2}) /, '$1-$2-$3 ');
+                const date = new Date(dateStr);
+                
+                // Check if date is valid
+                if (!isNaN(date.getTime())) {
+                    return date;
+                }
+            } catch (error) {
+                console.warn('Error parsing datetime for photo:', photo.filename, error);
+            }
+        }
+        
+        // Fallback: try to extract date from filename
+        if (photo.filename) {
+            try {
+                // Handle filenames like "2025-07-09 17-56-18.webp"
+                const filenameMatch = photo.filename.match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2})-(\d{2})-(\d{2})/);
+                if (filenameMatch) {
+                    const [, year, month, day, hour, minute, second] = filenameMatch;
+                    const date = new Date(`${year}-${month}-${day} ${hour}:${minute}:${second}`);
+                    if (!isNaN(date.getTime())) {
+                        return date;
+                    }
+                }
+            } catch (error) {
+                console.warn('Error parsing date from filename:', photo.filename, error);
+            }
+        }
+        
+        // Last resort: return epoch time (will sort to beginning)
+        console.warn('Could not parse date for photo:', photo.filename, 'using epoch time');
+        return new Date(0);
+    }
+    
+    const dateA = parsePhotoDate(a);
+    const dateB = parsePhotoDate(b);
+    
+    // Sort chronologically (earliest first)
+    return dateA - dateB;
 }
 
 // Utility function to handle image loading errors
