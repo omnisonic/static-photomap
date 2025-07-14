@@ -36,11 +36,21 @@ function populateAlbumSelector() {
         albumSelect.appendChild(option);
     });
     
-    // Auto-load the first album if available
+    // Auto-load the most recent album as default
     if (albums.length > 0) {
-        const firstAlbum = albums[0];
-        albumSelect.value = firstAlbum;
-        loadAlbum(firstAlbum);
+        // Sort albums to find the most recent one
+        const sortedAlbums = [...albums].sort((a, b) => {
+            // Extract dates from album names if possible
+            const dateA = extractDateFromAlbumName(a);
+            const dateB = extractDateFromAlbumName(b);
+            
+            // Sort in descending order (most recent first)
+            return dateB - dateA;
+        });
+        
+        const defaultAlbum = sortedAlbums[0];
+        albumSelect.value = defaultAlbum;
+        loadAlbum(defaultAlbum);
     }
 }
 
@@ -430,6 +440,62 @@ function sortPhotosByDate(a, b) {
     
     // Sort chronologically (earliest first)
     return dateA - dateB;
+}
+
+// Utility function to extract date from album name
+function extractDateFromAlbumName(albumName) {
+    try {
+        // Look for year patterns in album names
+        const yearMatch = albumName.match(/(\d{4})/);
+        if (yearMatch) {
+            const year = parseInt(yearMatch[1]);
+            
+            // Look for month patterns (like "july" or numeric months)
+            const monthNames = {
+                'january': 0, 'jan': 0,
+                'february': 1, 'feb': 1,
+                'march': 2, 'mar': 2,
+                'april': 3, 'apr': 3,
+                'may': 4,
+                'june': 5, 'jun': 5,
+                'july': 6, 'jul': 6,
+                'august': 7, 'aug': 7,
+                'september': 8, 'sep': 8,
+                'october': 9, 'oct': 9,
+                'november': 10, 'nov': 10,
+                'december': 11, 'dec': 11
+            };
+            
+            let month = 0; // Default to January
+            let day = 1;   // Default to 1st
+            
+            // Check for month names
+            const lowerAlbumName = albumName.toLowerCase();
+            for (const [monthName, monthIndex] of Object.entries(monthNames)) {
+                if (lowerAlbumName.includes(monthName)) {
+                    month = monthIndex;
+                    break;
+                }
+            }
+            
+            // Look for day patterns (like "july_9" or "9_trail")
+            const dayMatch = albumName.match(/[_\s](\d{1,2})[_\s]/);
+            if (dayMatch) {
+                const dayNum = parseInt(dayMatch[1]);
+                if (dayNum >= 1 && dayNum <= 31) {
+                    day = dayNum;
+                }
+            }
+            
+            return new Date(year, month, day);
+        }
+        
+        // If no year found, return a very old date so it sorts last
+        return new Date(1900, 0, 1);
+    } catch (error) {
+        console.warn('Error parsing date from album name:', albumName, error);
+        return new Date(1900, 0, 1);
+    }
 }
 
 // Utility function to handle image loading errors
