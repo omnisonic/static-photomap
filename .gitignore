@@ -42,3 +42,7 @@ photos/
 
 # Local Netlify folder
 .netlify
+
+#zip files
+
+*.zip
