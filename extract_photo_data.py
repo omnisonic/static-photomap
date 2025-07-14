@@ -77,7 +77,7 @@ def get_image_datetime(image_path):
     except:
         return None
 
-def scan_photos_directory(photos_dir):
+def scan_photos_directory(photos_dir, album_name):
     """Scan photos directory and extract GPS data"""
     if not os.path.exists(photos_dir):
         return []
@@ -102,11 +102,11 @@ def scan_photos_directory(photos_dir):
         datetime_taken = get_image_datetime(photo_path)
         
         if lat is not None and lon is not None:
-            # Create relative path for web use
-            rel_path = os.path.relpath(photo_path, photos_dir)
+            # Create relative path for web use - include album name in path
+            filename = os.path.basename(photo_path)
             photo_data.append({
-                'filename': os.path.basename(photo_path),
-                'path': f"photos/{rel_path}",
+                'filename': filename,
+                'path': f"photos/{album_name}/{filename}",
                 'latitude': lat,
                 'longitude': lon,
                 'datetime': datetime_taken
@@ -114,59 +114,86 @@ def scan_photos_directory(photos_dir):
     
     return photo_data
 
-def copy_photos_and_extract_data():
-    """Copy photos and extract data for all albums"""
-    source_photos_dir = "../photos"
-    target_photos_dir = "photos"
+def extract_photo_data():
+    """Extract data from existing photos in the photos directory"""
+    photos_dir = "photos"
     
     # Get all album directories
     albums = {}
-    S3_BASE_URL = "s3://your-s3-bucket-name/photos"  # Added S3 base URL
-    
-    if os.path.exists(source_photos_dir):
-        for item in os.listdir(source_photos_dir):
-            item_path = os.path.join(source_photos_dir, item)
+
+    if os.path.exists(photos_dir):
+        for item in os.listdir(photos_dir):
+            item_path = os.path.join(photos_dir, item)
             if os.path.isdir(item_path) and not item.startswith('.'):
                 print(f"\nProcessing album: {item}")
                 
-                # Copy photos
-                target_album_dir = os.path.join(target_photos_dir, item)
-                if os.path.exists(target_album_dir):
-                    shutil.rmtree(target_album_dir)
-                shutil.copytree(item_path, target_album_dir)
-                
-                # Extract photo data with S3 paths
-                photo_data = scan_photos_directory(target_album_dir)
-                # Update paths to use S3 URLs
-                for photo in photo_data:
-                    photo['path'] = os.path.join(S3_BASE_URL, item, os.path.basename(photo['path']))
+                # Extract photo data directly from existing photos
+                photo_data = scan_photos_directory(item_path, item)
                 albums[item] = photo_data
                 
-                # Copy avenza.geojson if it exists
-                avenza_source = os.path.join(item_path, "avenza.geojson")
-                if os.path.exists(avenza_source):
-                    avenza_target = os.path.join(target_album_dir, "avenza.geojson")
-                    shutil.copy2(avenza_source, avenza_target)
-                    print(f"Copied avenza.geojson for {item}")
+                # Check if avenza.geojson exists
+                avenza_file = os.path.join(item_path, "avenza.geojson")
+                if os.path.exists(avenza_file):
+                    print(f"Found avenza.geojson for {item}")
     
-    # Create JavaScript data file - update fetch URL to use S3 path
-    js_content = f"""// Auto-generated photo data
-const PHOTO_DATA = {json.dumps(albums, indent=2)};
+    # Create albums directory if it doesn't exist
+    albums_dir = "public/js/albums"
+    os.makedirs(albums_dir, exist_ok=True)
+    
+    # Create individual album data files
+    for album_name, photo_data in albums.items():
+        album_js_content = f"""// Auto-generated photo data for {album_name}
+const ALBUM_DATA = {json.dumps(photo_data, indent=2)};
+
+// Export for use in main application
+if (typeof module !== 'undefined' && module.exports) {{
+    module.exports = ALBUM_DATA;
+}} else {{
+    window.ALBUM_DATA = ALBUM_DATA;
+}}
+"""
+        album_file_path = os.path.join(albums_dir, f"{album_name}.js")
+        with open(album_file_path, "w") as f:
+            f.write(album_js_content)
+    
+    # Create albums index file
+    albums_index_content = f"""// Auto-generated albums index
+const AVAILABLE_ALBUMS = {json.dumps(list(albums.keys()), indent=2)};
 
 // Get list of available albums
 function getAvailableAlbums() {{
-    return Object.keys(PHOTO_DATA);
+    return AVAILABLE_ALBUMS;
 }}
 
-// Get photos for a specific album
-function getPhotosForAlbum(albumName) {{
-    return PHOTO_DATA[albumName] || [];
+// Load album data dynamically
+async function loadAlbumData(albumName) {{
+    try {{
+        const response = await fetch(`js/albums/${{albumName}}.js`);
+        if (!response.ok) {{
+            throw new Error(`Failed to load album data: ${{response.status}}`);
+        }}
+        
+        // Create a script element to load the album data
+        return new Promise((resolve, reject) => {{
+            const script = document.createElement('script');
+            script.src = `js/albums/${{albumName}}.js`;
+            script.onload = () => {{
+                const albumData = window.ALBUM_DATA;
+                resolve(albumData || []);
+            }};
+            script.onerror = () => reject(new Error(`Failed to load album script`));
+            document.head.appendChild(script);
+        }});
+    }} catch (error) {{
+        console.error(`Error loading album data for ${{albumName}}:`, error);
+        return [];
+    }}
 }}
 
 // Load Avenza data for an album if available
 async function loadAvenzaData(albumName) {{
     try {{
-        const response = await fetch(`{S3_BASE_URL}/${{albumName}}/avenza.geojson`);
+        const response = await fetch(`photos/${{albumName}}/avenza.geojson`);
         if (response.ok) {{
             return await response.json();
         }}
@@ -177,13 +204,13 @@ async function loadAvenzaData(albumName) {{
 }}
 """
     
-    with open("js/photo-data.js", "w") as f:
-        f.write(js_content)
+    with open("public/js/albums.js", "w") as f:
+        f.write(albums_index_content)
     
     print(f"\nExtracted data for {len(albums)} albums")
     for album, photos in albums.items():
         print(f"  {album}: {len(photos)} photos with GPS data")
 
 if __name__ == "__main__":
-    copy_photos_and_extract_data()
+    extract_photo_data()
     print("\nPhoto data extraction complete!")
