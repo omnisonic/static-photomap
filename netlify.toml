@@ -11,3 +11,7 @@
   targetPort = 3999
   publish = "public"
   autoLaunch = true
+
+# Exclude upload script from secrets scanning (contains config values, not secrets)
+[build.environment]
+  SECRETS_SCAN_OMIT_PATHS = "upload-photo-to-s3.sh"
