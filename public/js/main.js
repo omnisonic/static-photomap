@@ -3,6 +3,7 @@ let map;
 let currentMarkers = [];
 let currentAvenzaLayer = null;
 let imageObserver = null;
+let locationCache = new Map(); // Cache for reverse geocoding results
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -307,6 +308,9 @@ function updateGallery(photos) {
         const actualSrc = photo.presignedUrl || photo.path;
         const placeholderSrc = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxvYWRpbmcuLi48L3RleHQ+PC9zdmc+';
         
+        // Format the date for display
+        const formattedDate = formatPhotoDate(photo);
+        
         photoItem.innerHTML = `
             <img src="${placeholderSrc}"
                  data-src="${actualSrc}"
@@ -314,8 +318,8 @@ function updateGallery(photos) {
                  class="lazy-image"
                  onclick="openModal('${actualSrc}', '${photo.filename}')"
                  onerror="handleImageError(this)">
-            <div class="photo-caption">${photo.filename}</div>
-            <div class="photo-coordinates">📍 ${photo.latitude.toFixed(4)}, ${photo.longitude.toFixed(4)}</div>
+            <div class="photo-location">📍 Loading location...</div>
+            <div class="photo-date">📅 ${formattedDate}</div>
         `;
         
         gallery.appendChild(photoItem);
@@ -329,6 +333,11 @@ function updateGallery(photos) {
             img.src = img.dataset.src;
             img.removeAttribute('data-src');
         }
+        
+        // Update location asynchronously (with a small delay to avoid overwhelming the API)
+        setTimeout(() => {
+            updatePhotoLocation(photoItem, photo);
+        }, Math.random() * 2000); // Random delay between 0-2 seconds to spread out API calls
     });
 }
 
@@ -397,6 +406,175 @@ function hideLoading() {
 function showError(message) {
     // Simple error display - could be enhanced with a proper notification system
     alert(message);
+}
+
+// Format photo date to user-friendly format like "July 9"
+function formatPhotoDate(photo) {
+    try {
+        // Try to parse the datetime field first
+        if (photo.datetime) {
+            // Handle format "2025:07:09 17:54:13"
+            const dateStr = photo.datetime.replace(/^(\d{4}):(\d{2}):(\d{2}) /, '$1-$2-$3 ');
+            const date = new Date(dateStr);
+            
+            // Check if date is valid
+            if (!isNaN(date.getTime())) {
+                const options = { month: 'long', day: 'numeric' };
+                return date.toLocaleDateString('en-US', options);
+            }
+        }
+        
+        // Fallback: try to extract date from filename
+        if (photo.filename) {
+            const filenameMatch = photo.filename.match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2})-(\d{2})-(\d{2})/);
+            if (filenameMatch) {
+                const [, year, month, day] = filenameMatch;
+                const date = new Date(`${year}-${month}-${day}`);
+                if (!isNaN(date.getTime())) {
+                    const options = { month: 'long', day: 'numeric' };
+                    return date.toLocaleDateString('en-US', options);
+                }
+            }
+        }
+        
+        return 'Unknown date';
+    } catch (error) {
+        console.warn('Error formatting date for photo:', photo.filename, error);
+        return 'Unknown date';
+    }
+}
+
+// Get location name from coordinates using reverse geocoding
+async function getLocationName(latitude, longitude) {
+    // Create a cache key based on rounded coordinates (to group nearby photos)
+    const cacheKey = `${latitude.toFixed(3)},${longitude.toFixed(3)}`;
+    
+    // Check cache first
+    if (locationCache.has(cacheKey)) {
+        return locationCache.get(cacheKey);
+    }
+    
+    // First try to get a location based on known regions/areas
+    const staticLocation = getStaticLocationName(latitude, longitude);
+    if (staticLocation !== 'Unknown location') {
+        locationCache.set(cacheKey, staticLocation);
+        return staticLocation;
+    }
+    
+    // Only try API if we're not on a file:// URL (to avoid CORS issues)
+    if (window.location.protocol !== 'file:') {
+        try {
+            // Use Nominatim (OpenStreetMap) reverse geocoding service
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
+                {
+                    headers: {
+                        'User-Agent': 'GPS Photo Map Viewer'
+                    }
+                }
+            );
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // Extract the most appropriate location name
+            let locationName = 'Unknown location';
+            
+            if (data && data.address) {
+                const address = data.address;
+                
+                // Priority order for location names
+                if (address.city) {
+                    locationName = address.city;
+                } else if (address.town) {
+                    locationName = address.town;
+                } else if (address.village) {
+                    locationName = address.village;
+                } else if (address.hamlet) {
+                    locationName = address.hamlet;
+                } else if (address.county) {
+                    locationName = address.county;
+                } else if (address.state) {
+                    locationName = address.state;
+                } else if (data.display_name) {
+                    // Fallback to first part of display name
+                    const parts = data.display_name.split(',');
+                    locationName = parts[0].trim();
+                }
+            }
+            
+            // Cache the result
+            locationCache.set(cacheKey, locationName);
+            
+            return locationName;
+        } catch (error) {
+            console.warn('Error getting location name from API:', error);
+        }
+    }
+    
+    // Fallback to static location or unknown
+    const fallbackName = staticLocation;
+    locationCache.set(cacheKey, fallbackName);
+    return fallbackName;
+}
+
+// Get static location name based on coordinate ranges (fallback for when API is not available)
+function getStaticLocationName(latitude, longitude) {
+    // Define some known regions based on the coordinate ranges in your data
+    
+    // Utah Uinta Mountains area (around 40.68-40.70, -110.95 to -111.0)
+    if (latitude >= 40.65 && latitude <= 40.75 && longitude >= -111.0 && longitude <= -110.9) {
+        return 'Uinta Mountains, Utah';
+    }
+    
+    // Colorado area (around 39.0-39.2, -104.8 to -105.0)
+    if (latitude >= 38.8 && latitude <= 39.3 && longitude >= -105.2 && longitude <= -104.5) {
+        return 'Denver Area, Colorado';
+    }
+    
+    // Wyoming area (around 41.3-41.4, -106.3 to -106.4)
+    if (latitude >= 41.2 && latitude <= 41.5 && longitude >= -106.5 && longitude <= -106.2) {
+        return 'Southern Wyoming';
+    }
+    
+    // General Utah
+    if (latitude >= 37.0 && latitude <= 42.0 && longitude >= -114.0 && longitude <= -109.0) {
+        return 'Utah';
+    }
+    
+    // General Colorado
+    if (latitude >= 37.0 && latitude <= 41.0 && longitude >= -109.0 && longitude <= -102.0) {
+        return 'Colorado';
+    }
+    
+    // General Wyoming
+    if (latitude >= 41.0 && latitude <= 45.0 && longitude >= -111.0 && longitude <= -104.0) {
+        return 'Wyoming';
+    }
+    
+    // Western United States
+    if (latitude >= 31.0 && latitude <= 49.0 && longitude >= -125.0 && longitude <= -100.0) {
+        return 'Western United States';
+    }
+    
+    return 'Unknown location';
+}
+
+// Update location display for a photo item
+async function updatePhotoLocation(photoItem, photo) {
+    const locationElement = photoItem.querySelector('.photo-location');
+    if (!locationElement) return;
+    
+    try {
+        const locationName = await getLocationName(photo.latitude, photo.longitude);
+        locationElement.innerHTML = `📍 ${locationName}`;
+    } catch (error) {
+        console.warn('Error updating photo location:', error);
+        locationElement.innerHTML = '📍 Unknown location';
+    }
 }
 
 // Utility function to sort photos by date with robust parsing
