@@ -59,6 +59,7 @@ function setupEventListeners() {
     const albumSelect = document.getElementById('albumSelect');
     const modal = document.getElementById('photoModal');
     const closeBtn = document.querySelector('.close');
+    const sidebarToggle = document.getElementById('sidebarToggle');
     
     // Album selection change
     albumSelect.addEventListener('change', function() {
@@ -70,6 +71,11 @@ function setupEventListeners() {
             clearGallery();
         }
     });
+    
+    // Sidebar toggle functionality
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', toggleSidebarVisibility);
+    }
     
     // Modal close events
     closeBtn.addEventListener('click', closeModal);
@@ -495,6 +501,40 @@ function extractDateFromAlbumName(albumName) {
     } catch (error) {
         console.warn('Error parsing date from album name:', albumName, error);
         return new Date(1900, 0, 1);
+    }
+}
+
+// Toggle sidebar visibility on mobile
+function toggleSidebarVisibility() {
+    const sidebar = document.querySelector('.sidebar');
+    const toggleIcon = document.querySelector('.toggle-icon');
+    const container = document.querySelector('.container');
+    
+    if (!sidebar || !toggleIcon) {
+        console.warn('Sidebar toggle elements not found');
+        return;
+    }
+    
+    // Check if sidebar is currently collapsed
+    const isCollapsed = sidebar.classList.contains('collapsed');
+    
+    if (isCollapsed) {
+        // Expand the sidebar
+        sidebar.classList.remove('collapsed');
+        if (container) container.classList.remove('sidebar-collapsed');
+        toggleIcon.textContent = '☰';
+        
+        // Invalidate map size after expansion to ensure proper rendering
+        setTimeout(() => {
+            if (map) {
+                map.invalidateSize();
+            }
+        }, 300); // Wait for CSS transition to complete
+    } else {
+        // Collapse the sidebar
+        sidebar.classList.add('collapsed');
+        if (container) container.classList.add('sidebar-collapsed');
+        toggleIcon.textContent = '×';
     }
 }
 
