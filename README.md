@@ -2,7 +2,6 @@
 
 Combining Leaflet.js mapping with your geo-tagged photos in a lightweight static web app. Deployable via Netlify or AWS S3.
 
-![App Screenshot](https://example.com/path/to/screenshot.jpg)
 ## Features
 
 - 🗺️ Interactive map with photo markers (Leaflet.js)
