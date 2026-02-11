@@ -1,5 +1,8 @@
 # GPS Photo Map Viewer (Static Edition)
 
+![Photo](images/screenshot-2026-02-07-at-10.49.17am.webp)
+
+
 Combining Leaflet.js mapping with your geo-tagged photos in a lightweight static web app. Deployable via Netlify or AWS S3.
 
 ## Features
